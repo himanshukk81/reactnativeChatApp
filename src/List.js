@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text, View, TouchableOpacity, StyleSheet } from 'react-native'
+import { Text, View, TouchableOpacity, StyleSheet,ActivityIndicator,ScrollView } from 'react-native'
 import { Actions } from 'react-native-router-flux'
 // const goDetail = () => {
 //     Actions.Detail()
@@ -20,56 +20,116 @@ import { Actions } from 'react-native-router-flux'
 //  export default List
  
 class List extends Component {
-   state = {
-      names: [
-         {
-            id: 0,
-            name: 'Ben',
-         },
-         {
-            id: 1,
-            name: 'Susan',
-         },
-         {
-            id: 2,
-            name: 'Robert',
-         },
-         {
-            id: 3,
-            name: 'Mary',
-         },
-      ]
-   }
+//    state = {
+//       names: [
+//          {
+//             id: 0,
+//             name: 'Ben',
+//          },
+//          {
+//             id: 1,
+//             name: 'Susan',
+//          },
+//          {
+//             id: 2,
+//             name: 'Robert',
+//          },
+//          {
+//             id: 3,
+//             name: 'Mary',
+//          },
+//       ]
+//    }
+
+    state={
+        data:''
+    }
+
+    constructor(props) {    
+        super(props);
+        this.state ={ isLoading: true}    
+        
+        // this.state={
+        //     data:''
+        // }   
+        // this.state1={
+        //     isLoading:true
+        // }
+    }
    
+
+    componentDidMount() {       
+        var obj1={"userId":83};
+        var object = {
+            method: 'POST',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            body:JSON.stringify(obj1)
+        };
+           
+       
+
+
+        fetch('https://reactnativechat.herokuapp.com/api/v1/app/user/users',object)
+         .then((response) => response.json())
+         .then((responseJson) => {
+            // alert("User list==="+JSON.stringify(responseJson));
+            // console.log("users list====="+responseJson);
+            // this.setState({data:responseJson})
+            this.setState({
+                isLoading: false,
+                dataSource: responseJson,
+                }, function(){
+            });
+
+            // alert("users=="+JSON.stringify(this.state.data));
+         })
+         .catch((error) => {
+            alert("Failed to fetch users please try again");
+            console.error("error in users list fetch==="+error);
+         });
+   
+    }
 
    
    alertItemName = (item) => {
       alert(item.name)
    }
-goDetail1=(item)=>{
-    console.log("Item nme=="+item.name);
-    Actions.Detail({text :item.name})
-}
+    goDetail1=(item)=>{
+        console.log("Item nme=="+item.name);
+        Actions.Detail({text :item.name})
+    }
  
    
    render() {
-    console.log("state=="+JSON.stringify(this.state));
+    if(this.state.isLoading){
+        return(
+          <View style={{flex: 1, padding: 20}}>
+            <ActivityIndicator/>
+          </View>
+        )
+    }  
       return (
-         <View> 
+
+        <ScrollView>
+         <View style={{flex: 1, paddingTop:0}}> 
             {
-               this.state.names.map((item, index) => (
+               this.state.dataSource.map((item, index) => (
                   <TouchableOpacity
                      key = {item.id}
                      style = {styles.container}
                      onPress = {()=>this.goDetail1(item)}>
                      
                      <Text style = {styles.text}>
-                        {item.name}
+                        {item.mobile}
                      </Text>
                   </TouchableOpacity>
                ))
             }
          </View>
+         </ScrollView> 
       )
    }
 }

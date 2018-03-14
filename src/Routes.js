@@ -8,9 +8,9 @@ import Login from './login.js'
 const Routes = () => (
     <Router>
        <Scene key = "root"  navigationBarStyle={{ backgroundColor:'#40838f'}}>
-          <Scene key = "Login" component = {Login} title = "Login" initial = {true} titleStyle={{color : "#FFF"}} />    
-          <Scene key = "Users" component = {List} title = "Users" />
-          <Scene key = "Detail" component = {Detail} title = "Detail" />
+          <Scene key = "Login" component = {Login} title = "Login" titleStyle={{color : "#FFF"}} />    
+          <Scene key = "Users" component = {List} title = "Users" initial = {true} />
+          <Scene key = "Detail" component = {Detail} title = "Detail"  />
        </Scene>
     </Router>
  )

@@ -1,29 +1,84 @@
 import React, { Component } from 'react'
-import { Text, View, TouchableOpacity, StyleSheet,StatusBar,Image,TextInput,Button,KeyboardAvoidingView,ScrollView } from 'react-native'
-import { Actions } from 'react-native-router-flux'
+import { Text, View, TouchableOpacity, StyleSheet,StatusBar,ActivityIndicator,Image,TextInput,Button,KeyboardAvoidingView,ScrollView } from 'react-native'
+import { Actions } from 'react-native-router-flux';
 
-
+let states=122;
 export default class  Login  extends Component{
-    state = {
-        behavior: 'padding',
-        modalOpen: false,
-      };
-    // signIn=()=>{
-    //     Actions.Home()
-    // }
 
-    signIn()
+
+    // state1 = {
+    //     mobile: ''
+    // } 
+    
+    constructor(props) {
+         
+            super(props);
+        
+            this.state={
+                mobile:'',
+                isLoading: false
+            }
+            
+            
+    }    
+
+
+    componentDidMount() {
+       
+        
+      }
+    
+  
+
+    
+    signIn=()=>
     {
-       // alert("Successfully login");
-       Actions.Home()
+            
+            // alert("helloo")
+            this.setState({isLoading:true})
+                var object = {
+                    method: 'POST',
+                    headers: {
+                      'Accept': 'application/json',
+                      'Content-Type': 'application/json'
+                    },
+                    body:JSON.stringify(this.state)
+                };
+                
+               if(!this.state.mobile)
+               {
+                 alert("Please Enter Mobile Number");
+                 return;
+               }
+               
+               fetch('https://reactnativechat.herokuapp.com/api/v1/app/user/verifyUser',object)
+                // .then((response) => response.json())
+                .then((responseJson) => {
+                    this.setState({isLoading:false})
+                    console.log("logged in user========"+responseJson);
+                    Actions.Users()  
+                })
+                .catch((error)=> {
+                    this.setState({isLoading:false})
+                    console.error("Error in sign up::=="+error);
+                    alert("Something Went Wrong Please Try Again");
+                });
     }
+
+
     fbLogin=()=>{
         alert("Sign In Success With FB");
     }
     googleLogin=()=>{
         alert("Sign In Success With Gmail");
     }
+
+    handleMobileNo =(text) =>{
+        this.setState({mobile:text});
+    }
     render(){
+
+
         return(
 
 
@@ -31,12 +86,16 @@ export default class  Login  extends Component{
                     <StatusBar backgroundColor="#002d38" barStyle="light-content" />                
                     
                         <View>             
-                            <TextInput style={styles.inputBox} underlineColorAndroid='rgba(0,0,0,0)' placeholder="Enter Mobile Number" placeholderTextColor="#ffffff" />
+                            <TextInput style={styles.inputBox} underlineColorAndroid='rgba(0,0,0,0)' placeholder="Enter Mobile Number" placeholderTextColor="#ffffff" onChangeText = {this.handleMobileNo} />
                             
                          
-                            <TouchableOpacity  style={styles.button} onPress = {this.signIn}>
-                                <Text style={styles.buttonText}>Sign In</Text>
+                            <TouchableOpacity  style={styles.button} onPress = {()=>this.signIn()}> 
+                                <Text style={styles.buttonText}>Proceed</Text>  
+
+                                        
                             </TouchableOpacity>    
+                            {this.state.isLoading ? <ActivityIndicator size="large" color="#0000ff" /> : null}
+                            
                         </View>                         
                 </View>   
         )
@@ -52,6 +111,9 @@ const styles = StyleSheet.create ({
        justifyContent: 'center',
        alignItems:'center'
     },
+
+
+
 
     inputBox:{
       width:300,
