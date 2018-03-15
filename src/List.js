@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text, View, TouchableOpacity, StyleSheet,ActivityIndicator,ScrollView } from 'react-native'
+import { Text, View, TouchableOpacity, StyleSheet,ActivityIndicator,ScrollView,AsyncStorage } from 'react-native'
 import { Actions } from 'react-native-router-flux'
 // const goDetail = () => {
 //     Actions.Detail()
@@ -58,20 +58,30 @@ class List extends Component {
     }
    
 
-    componentDidMount() {       
-        var obj1={"userId":83};
+    componentDidMount() {    
+        var obj1={};
+         AsyncStorage.getItem('userInfo', (err, result) =>{
+            console.log("list.js 65===="+result);
+            obj1=JSON.parse(result);
+            obj1.userId=obj1.id;
+            // alert("68 line========"+JSON.stringify(obj1));
+            this.getUsersList(obj1);
+            // alert("Objec infos 65=="+result);
+        });         
+    }
+
+    getUsersList(infos)
+    {
+        // alert("Object infos=="+JSON.stringify(infos));
+        // console.log("74 line==="+JSON.stringify(obj1));
         var object = {
             method: 'POST',
             headers: {
               'Accept': 'application/json',
               'Content-Type': 'application/json'
             },
-            body:JSON.stringify(obj1)
+            body:JSON.stringify(infos)
         };
-           
-       
-
-
         fetch('https://reactnativechat.herokuapp.com/api/v1/app/user/users',object)
          .then((response) => response.json())
          .then((responseJson) => {
@@ -89,8 +99,7 @@ class List extends Component {
          .catch((error) => {
             alert("Failed to fetch users please try again");
             console.error("error in users list fetch==="+error);
-         });
-   
+        });  
     }
 
    
@@ -99,7 +108,7 @@ class List extends Component {
    }
     goDetail1=(item)=>{
         console.log("Item nme=="+item.name);
-        Actions.Detail({text :item.name})
+        Actions.Detail({text :item.name,id:item.id})
     }
  
    

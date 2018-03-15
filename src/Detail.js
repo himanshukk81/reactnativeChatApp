@@ -19,15 +19,90 @@ class Detail extends Component {
    
 
 // }
+
+constructor(props)
+{
+  super(props)
+  alert("Props data==="+JSON.stringify(this.props));
+  console.log("Props data=="+JSON.stringify(this.props));
+  // // alert("data for state==="+JSON.stringify(this.state2));
+  // state = {
+  //   messages: [],
+  //   userId:this.makeid()
+  // }
+}
+
+componentDidMount() {    
+      // this.state2={data:this.props}
+      // socket = io('https://reactnativechat.herokuapp.com', {
+      //   transports: ['websocket']
+      // })
+      // socket.on('connect', () => {
+      //   console.log("socket connected")
+      // })
+
+      // socket.on('connect_error', (err) => {
+      //   console.log("connection error==="+err);
+      //   // alert("Connection error listen==="+err);
+      // })
+
+      // socket.on('disconnect', () => {
+      //   // alert("Connection disconnect===");
+      //   console.log("Disconnected Socket!")
+      // })
+
+      // var data={userId:12}
+
+      // socket.emit('join',data);
+
+      // socket.on('chat_message', (messages) => {
+      //   this.onReceivedMessage(messages)
+      // })     
+
+      // this.setState({
+      //   messages: [
+      //     {
+      //       _id: 1,
+      //       text: 'Hello developer',
+      //       createdAt: new Date(),
+      //       user: {
+      //         _id: 2,
+      //         name: 'React Native',
+      //         avatar: 'https://facebook.github.io/react/img/logo_og.png',
+      //       },
+      //     },
+      //   ],
+      // })
+}
+
+onReceivedMessage(messages){
+  this.storeMessages(messages);
+}
+onSend(messages = []) {
+  var messageInfo={};
+  messageInfo.message=messages[0].text;
+  messageInfo.receiverId=12;
+  socket.emit('chat_message',messageInfo);
+  this.storeMessages(messages);
+}
+storeMessages(messages) {
+  this.setState((previousState) => {
+    return {
+      messages: GiftedChat.append(previousState.messages, messages),
+      };
+  });
+}
 render() {
-    console.log("data===="+JSON.stringify(this.props));
-    return (
-      <View style={{margin: 128}}>
-        {/* <Text>This is PageTwo!</Text> */}
-        <Text>Hi this is {this.props.text}</Text>
-      </View>
-    )
-  }
-} 
+  return (
+    <GiftedChat
+      messages={this.state.messages}
+      onSend={messages => this.onSend(messages)}
+      user={{
+        userInfo
+      }}
+    />
+  );
+ }
+}
   
 export default Detail

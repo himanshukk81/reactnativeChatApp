@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
-import { Text, View, TouchableOpacity, StyleSheet,StatusBar,ActivityIndicator,Image,TextInput,Button,KeyboardAvoidingView,ScrollView } from 'react-native'
+import { Text, View, TouchableOpacity, StyleSheet,StatusBar,ActivityIndicator,Image,TextInput,Button,KeyboardAvoidingView,ScrollView,AsyncStorage } from 'react-native'
 import { Actions } from 'react-native-router-flux';
 
-let states=122;
 export default class  Login  extends Component{
 
 
@@ -33,8 +32,6 @@ export default class  Login  extends Component{
     
     signIn=()=>
     {
-            
-            // alert("helloo")
             this.setState({isLoading:true})
                 var object = {
                     method: 'POST',
@@ -44,7 +41,6 @@ export default class  Login  extends Component{
                     },
                     body:JSON.stringify(this.state)
                 };
-                
                if(!this.state.mobile)
                {
                  alert("Please Enter Mobile Number");
@@ -52,11 +48,19 @@ export default class  Login  extends Component{
                }
                
                fetch('https://reactnativechat.herokuapp.com/api/v1/app/user/verifyUser',object)
-                // .then((response) => response.json())
+                .then((response) => response.json())
                 .then((responseJson) => {
                     this.setState({isLoading:false})
-                    console.log("logged in user========"+responseJson);
-                    Actions.Users()  
+                    // alert("User infos::=="+JSON.stringify(responseJson));
+                    // console.log("logged in user========"+JSON.stringify(responseJson));
+                    AsyncStorage.setItem('userInfo', JSON.stringify(responseJson[0]), () =>{
+                        AsyncStorage.getItem('userInfo', (err, result) =>{
+                            // obj1.userId=result.id;
+                            // alert("Objec infos 65=="+result);
+                            // this.getUsersList()
+                        });  
+                    });
+                    Actions.Users()
                 })
                 .catch((error)=> {
                     this.setState({isLoading:false})
