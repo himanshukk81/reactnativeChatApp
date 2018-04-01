@@ -11,6 +11,7 @@ import {
   Text,
   View,Button
 } from 'react-native';
+
 import { GiftedChat } from 'react-native-gifted-chat';
 const io = require('socket.io-client');
 const instructions = Platform.select({
