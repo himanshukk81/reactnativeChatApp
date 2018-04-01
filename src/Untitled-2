@@ -1,0 +1,7 @@
+static navigationOptions = {
+    headerRight: (
+    <Button
+        title = "Test"
+        onPress = {() => params.handleSave && params.handleSave()}/>
+    )
+}

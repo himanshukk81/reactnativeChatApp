@@ -4,27 +4,34 @@ import List from './List.js'
 import Detail from './Detail.js'
 import Login from './login.js'
 import { TouchableOpacity } from 'react-native';
-import { Icon } from 'native-base';
+// import { Icon } from 'native-base';
 import { StackNavigator, DrawerNavigator } from 'react-navigation';
 import Groups from './groups.js'
 import GroupDetail from './groupDetail.js'
+import { Icon } from 'react-native-elements'
 // import NavigationDrawer from './NavigationDrawer.js' 
 // const io = require('socket.io-client');
 // import Drawer from 'react-native-drawer';
 
+//<Icon name="menu" size={30} color="black"/>
+                    /* <Icon name='home' /> */
+
 const DrawerRoutes = {
-	// Users: {
-	// 	screen: List,
-	// 	navigationOptions:({navigation}) => ({
-  //           title: "Users",
-  //           headerLeft:(
-  //             <TouchableOpacity onPress={() => navigation.navigate("DrawerOpen")}>
-  //               <Icon name="menu" size={30} color="black"/>
-  //             </TouchableOpacity>
-  //           ),
-  //           headerStyle: { paddingRight: 10, paddingLeft: 10 }
-  //       })
-  // },
+	Users: {
+		screen: List,
+		navigationOptions:({navigation}) => ({
+            title: "Users",
+            headerLeft:(
+              <TouchableOpacity onPress={() => navigation.navigate("DrawerOpen")}>
+
+                  <Icon name='rowing' />
+              </TouchableOpacity>
+
+              
+            ),
+            headerStyle: { paddingRight: 10, paddingLeft: 10 }
+        })
+  },
   Groups: {
 		screen: Groups,
 		navigationOptions:({navigation}) => ({
@@ -44,33 +51,34 @@ const DrawerRoutes = {
             headerLeft:null
     })
   },
-  GroupDetail: {
-    screen:GroupDetail,
-    navigationOptions:({navigation}) => ({
-      title: "GroupDetail"
-    })
-	},
+  
 };
 
 
 const stackNavigations = StackNavigator({
-	// Signin: { screen: Login,
-	// 	navigationOptions:({navigation}) => ({
-  //           title: "Login",
-  //           headerLeft:null
-  //       })
-
-  // },
-  
-  Groups: {
-		screen: Groups,
+	Signin: { screen: Login,
 		navigationOptions:({navigation}) => ({
-            title: "Groups",
+            title: "Login",
             headerLeft:null
         })
+
   },
+  
+  // Groups: {
+	// 	screen: Groups,
+	// 	navigationOptions:({navigation}) => ({
+  //           title: "Groups",
+  //           headerLeft:null
+  //       })
+  // },
 	Home: {
 		screen: DrawerNavigator(DrawerRoutes),
-  }
+  },
+  // GroupDetail: {
+  //   screen:GroupDetail,
+  //   navigationOptions:({navigation}) => ({
+  //     title: "GroupDetail"
+  //   })
+	// },
 });
 export default stackNavigations;

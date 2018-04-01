@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import {Modal, Text, TouchableHighlight, View,ScrollView,ActivityIndicator,StyleSheet,TouchableOpacity,TextInput} from 'react-native';
-import { Container, Content, Item, List, Body, ListItem ,CheckBox} from 'native-base';
+import {Modal, Text, TouchableHighlight, View,ScrollView,ActivityIndicator,StyleSheet,TouchableOpacity,TextInput,Button} from 'react-native';
+import { Container, Content, Item, List, Body, ListItem ,CheckBox,Icon} from 'native-base';
 import { environment } from './config/environment';
 // import { CheckBox } from 'react-native-elements'
 var groupUsers=[];
@@ -242,9 +242,17 @@ export default class Groups extends Component {
     groupInfo.userId=this.state.userId;
     this.props.navigation.navigate('GroupDetail', groupInfo);
   }
-
+  static navigationOptions = {
+    headerRight: (
+  
+      <TouchableOpacity onPress={() => this.setModalVisible(true)}>
+        <Icon name="ei-plus" />
+      </TouchableOpacity>    
+    )
+  }
   render() 
   {
+    
     if(this.state.isLoading){
       return(
         <View style={{flex: 1, padding: 20}}>
@@ -304,7 +312,7 @@ export default class Groups extends Component {
                         onPress={() => {
                           this.setModalVisible(true);
                         }}>
-                        <Text>Add Group</Text>
+                        <Text>Add Group111</Text>
                 </TouchableHighlight>         
 
               <ScrollView>

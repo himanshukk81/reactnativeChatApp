@@ -4,6 +4,7 @@ import { Actions } from 'react-native-router-flux';
 import { fbLoginPermissions } from './constants/index';
 import { FBLoginManager } from 'react-native-facebook-login';
 import { environment } from './config/environment';
+import { Container, Header, Content, Icon } from 'native-base';
 export default class Login extends Component {
 
     // let profileInfo;
@@ -161,27 +162,29 @@ export default class Login extends Component {
 
     render() {
         return (
-
-
+             
             <View style={styles.container}>
-                <StatusBar backgroundColor="#002d38" barStyle="light-content" />
+            <StatusBar backgroundColor="#002d38" barStyle="light-content" />
 
-                <View>
-                    <TextInput style={styles.inputBox} underlineColorAndroid='rgba(0,0,0,0)' placeholder="Enter Mobile Number" placeholderTextColor="#ffffff" onChangeText={this.handleMobileNo} />
+            <View>
+                <TextInput style={styles.inputBox} underlineColorAndroid='rgba(0,0,0,0)' placeholder="Enter Mobile Number" placeholderTextColor="#ffffff" onChangeText={this.handleMobileNo} />
 
 
-                    <TouchableOpacity style={styles.button} onPress={() => this.signIn()}>
-                        <Text style={styles.buttonText}>Proceed</Text>
-                    </TouchableOpacity>
+                <TouchableOpacity style={styles.button} onPress={() => this.signIn()}>
+                    <Text style={styles.buttonText}>Proceed</Text>
+                </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.fbButton} onPress={() => this.fbLogin()}>
-                        <Text style={styles.fbButtonText}>Sign In With Facebook</Text>
-                    </TouchableOpacity>
+                <TouchableOpacity style={styles.fbButton} onPress={() => this.fbLogin()}>
+                    <Text style={styles.fbButtonText}>Sign In With Facebook</Text>
+                </TouchableOpacity>
 
-                    {this.state.isLoading ? <ActivityIndicator size="large" color="#0000ff" /> : null}
+                {this.state.isLoading ? <ActivityIndicator size="large" color="#0000ff" /> : null}
 
-                </View>
             </View>
+        </View>
+            
+
+           
         )
     }
 }
