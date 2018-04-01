@@ -7,7 +7,6 @@
     "test": "jest"
   },
   "dependencies": {
-<<<<<<< HEAD
     "native-base": "^2.4.1",
     "react": "16.0.0",
     "react-native": "0.52.2",
@@ -17,22 +16,12 @@
     "react-native-gifted-chat": "^0.4.3",
     "react-native-router-flux": "^4.0.0-beta.28",
     "socket.io-client": "^1.7.3"
-=======
-    "react": "16.2.0",
-    "react-native": "0.53.0",
-    "react-native-router-flux": "^4.0.0-beta.28"
->>>>>>> 3cd832bd31d4510b92af8e00e357fef6a7dff1c3
   },
   "devDependencies": {
     "babel-jest": "22.2.2",
     "babel-preset-react-native": "4.0.0",
-<<<<<<< HEAD
     "jest": "22.4.2",
     "react-test-renderer": "16.0.0"
-=======
-    "jest": "22.3.0",
-    "react-test-renderer": "16.2.0"
->>>>>>> 3cd832bd31d4510b92af8e00e357fef6a7dff1c3
   },
   "jest": {
     "preset": "react-native"
