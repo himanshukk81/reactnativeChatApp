@@ -7,6 +7,17 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
+// #import <UIKit/UIKit.h>
+
+
+// @import UserNotifications;
+// @interface AppDelegate : UIResponder <UIApplicationDelegate,UNUserNotificationCenterDelegate>
+
+// @property (nonatomic, strong) UIWindow *window;
+
+// @end
+
+
 #import <UIKit/UIKit.h>
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>

@@ -1,4 +1,9 @@
 rootProject.name = 'reactChatApp'
+include ':react-native-device-token'
+project(':react-native-device-token').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-device-token/android')
+
+include ':react-native-fcm'
+project(':react-native-fcm').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-fcm/android')
 include ':react-native-firebase'
 project(':react-native-firebase').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-firebase/android')
 include ':react-native-facebook-login'
