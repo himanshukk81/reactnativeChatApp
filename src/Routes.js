@@ -9,6 +9,7 @@ import { StackNavigator, DrawerNavigator } from 'react-navigation';
 import Groups from './groups.js'
 import GroupDetail from './groupDetail.js'
 import { Icon } from 'react-native-elements'
+import AddMemberPage from './addMember.js' 
 // import NavigationDrawer from './NavigationDrawer.js' 
 // const io = require('socket.io-client');
 // import Drawer from 'react-native-drawer';
@@ -24,7 +25,7 @@ const DrawerRoutes = {
             headerLeft:(
               <TouchableOpacity onPress={() => navigation.navigate("DrawerOpen")}>
 
-                  <Icon name='rowing' />
+                  <Icon name='menu' />
               </TouchableOpacity>
 
               
@@ -41,7 +42,6 @@ const DrawerRoutes = {
                 <Icon name="menu" />
               </TouchableOpacity>
             ),
-        
         })
   },
 	Logout: {
@@ -53,32 +53,46 @@ const DrawerRoutes = {
   },
   
 };
-
-
 const stackNavigations = StackNavigator({
 	Signin: { screen: Login,
 		navigationOptions:({navigation}) => ({
             title: "Login",
             headerLeft:null
         })
-
   },
-  
   // Groups: {
 	// 	screen: Groups,
 	// 	navigationOptions:({navigation}) => ({
   //           title: "Groups",
-  //           headerLeft:null
+  //           headerLeft:(
+  //             <TouchableOpacity onPress={() => navigation.navigate("DrawerOpen")}>
+  //               <Icon name="menu" />
+  //             </TouchableOpacity>
+  //           ),
   //       })
   // },
 	Home: {
 		screen: DrawerNavigator(DrawerRoutes),
   },
-  // GroupDetail: {
-  //   screen:GroupDetail,
-  //   navigationOptions:({navigation}) => ({
-  //     title: "GroupDetail"
-  //   })
-	// },
+  GroupDetail: {
+    screen:GroupDetail,
+    navigationOptions:({navigation}) => ({
+      title: "GroupDetail"
+    })
+  },
+
+  Detail: {
+    screen:Detail,
+    navigationOptions:({navigation}) => ({
+      title: "Detail"
+    })
+  },
+  
+  AddMemberPage:{
+    screen:AddMemberPage,
+    navigationOptions:({navigation}) => ({
+      title: "AddMember"
+    })
+  }
 });
 export default stackNavigations;

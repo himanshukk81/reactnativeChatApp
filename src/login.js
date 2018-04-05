@@ -5,13 +5,15 @@ import { fbLoginPermissions } from './constants/index';
 import { FBLoginManager } from 'react-native-facebook-login';
 import { environment } from './config/environment';
 import { Container, Header, Content, Icon } from 'native-base';
+import {SessionService} from './config/session-service';
+// var sessionData;
+
+
 export default class Login extends Component {
 
-    // let profileInfo;
     constructor(props) {
 
         super(props);
-
         this.state = {
             name: null,
             mobile: null,
@@ -42,10 +44,10 @@ export default class Login extends Component {
 
 
     signIn = () => {
-        // if (!this.state.mobile) {
-        //     alert("Please Enter Mobile Number");
-        //     return;
-        // }
+        if (!this.state.mobile) {
+            alert("Please Enter Mobile Number");
+            return;
+        }
         // AsyncStorage.setItem('userInfo', JSON.stringify(this.state),(err,result) =>{
         //   // alert("Set item=====");
         //   AsyncStorage.getItem("userInfo").then((value) => {
@@ -61,21 +63,11 @@ export default class Login extends Component {
 
 
         // });
-
-        // this.saveInfoInDB();
-
-        // console.log("set state=="+this.state);
-
-
-
+        this.setState({ isLoading: true })
+        this.saveInfoInDB();
         
+        // console.log("set state=="+this.state);
         // alert("data==="+this.state.userType);
-
-        var user={};
-        user.id=1780;
-        this.props.navigation.navigate('Home', user);
-
-
     }
 
 
@@ -102,7 +94,7 @@ export default class Login extends Component {
 
                 console.log("Data====" + json);
 
-                alert("Data===" + json);
+                // alert("Data===" + json);
                 this.setState({ name: json.first_name, userType: "F" })
                 this.saveInfoInDB();
             })
@@ -114,7 +106,7 @@ export default class Login extends Component {
 
     saveInfoInDB() {
         // console.log("State info==="+JSON.stringify(this.setState));
-        this.setState({ isLoading: true })
+        
         var object = {
             method: 'POST',
             headers: {
@@ -127,6 +119,8 @@ export default class Login extends Component {
 
         // var prod="https://reactnativechat.herokuapp.com/api/v1/app/";
         // var local="http://192.168.43.152:3001/api/v1/app/";
+
+        // alert("url:="+environment.API_URL.liveUrl);
         fetch(environment.API_URL.liveUrl + 'user/verifyUser', object)
             .then((response) => response.json())
             .then((responseJson) => {
@@ -139,8 +133,12 @@ export default class Login extends Component {
 
 
                 // Actions.Users({ item: responseJson[0] })
+                SessionService.setUser(responseJson[0]);
                 this.props.navigation.navigate('Home', responseJson[0]);
+                // SessionService.setUserInfo(responseJson[0]);
+                // sessionData.setUserInfo(responseJson[0]);
                 this.setState({ isLoading: false })
+
                 // Actions.Users()
 
             })
@@ -158,18 +156,19 @@ export default class Login extends Component {
     handleMobileNo = (text) => {
         this.setState({ mobile: text, userType: 'M' });
     }
+    
 
 
     render() {
+       
         return (
              
- <View style={styles.container}>
+            <View style={styles.container}>
                 <StatusBar backgroundColor="#002d38" barStyle="light-content" />
 
-                <View>
+                <View>                    
                     <TextInput style={styles.inputBox} underlineColorAndroid='rgba(0,0,0,0)' placeholder="Enter Mobile Number" placeholderTextColor="#ffffff" onChangeText={this.handleMobileNo} />
-
-
+                
                     <TouchableOpacity style={styles.button} onPress={() => this.signIn()}>
                         <Text style={styles.buttonText}>Proceed</Text>
                     </TouchableOpacity>
@@ -180,6 +179,7 @@ export default class Login extends Component {
 
                     {this.state.isLoading ? <ActivityIndicator size="large" color="#0000ff" /> : null}
 
+                     
                 </View>
             </View>
             
@@ -238,7 +238,4 @@ const styles = StyleSheet.create({
         color: '#ffffff',
         textAlign: 'center'
     }
-
-
-
 })

@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import {Text, View, TouchableOpacity, StyleSheet,ActivityIndicator} from 'react-native'
 import { Actions } from 'react-native-router-flux'
 import { GiftedChat } from 'react-native-gifted-chat'
+import { SessionService } from './config/session-service';
 const io = require('socket.io-client');
 let socket;
 let userInfo;
@@ -16,7 +17,7 @@ export default class Detail extends Component{
         // console.log("props info==="+this.props);
         this.state = {
           messages: [],
-          userId:123,
+          userId:SessionService.getUser().id,
           isLoading:true
         }
          userInfo={ _id:this.state.userId};
@@ -145,9 +146,9 @@ export default class Detail extends Component{
         // console.log("New messages==="+JSON.stringify(messages));
         var messageInfo={};
         messageInfo.message=messages[0].text;
-        messageInfo.receiverId=this.props.object.receiverId;
+        messageInfo.receiverId=this.props.navigation.state.params.receiverId;
         messageInfo.createDate=new Date();
-        messageInfo.senderId=this.props.object.userId;
+        messageInfo.senderId=this.state.userId;
         socket.emit('chat_message',messageInfo);
         // // this.socket.emit('chat_message', {to: this.sendTo, text: this.message});
         this.storeMessages(messages);

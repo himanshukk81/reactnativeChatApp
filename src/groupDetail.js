@@ -1,51 +1,49 @@
 import React, { Component } from 'react'
-import {Text, View, TouchableOpacity, StyleSheet,ActivityIndicator} from 'react-native'
+import {Modal,Text, View, TouchableOpacity, StyleSheet,ActivityIndicator,TouchableHighlight,Button,TextInput} from 'react-native'
 import { Actions } from 'react-native-router-flux'
+// import {Modal, Text, TouchableHighlight, View,ScrollView,ActivityIndicator,StyleSheet,TouchableOpacity,TextInput,Button} from 'react-native';
+import { Container, Content, Item, List, Body, ListItem ,CheckBox,Icon} from 'native-base';
 import { GiftedChat } from 'react-native-gifted-chat'
+import {SessionService} from './config/session-service';
 const io = require('socket.io-client');
 let socket;
 let userInfo;
+var addGroup;
 export default class GroupDetail extends Component{
-
      constructor(props)
     {
+      // SessionService.getUser().id
+      // this.props.navigation.state.params.groupId
         super(props);
         this.state = {
-          groupMessages: [],
-          userId:1780,
+          messages: [],
+          userId:SessionService.getUser().id,
           isLoading:true,
-          groupId:7
+          groupId:SessionService.getGroupInfo().groupId
         }
          userInfo={ _id:this.state.userId};
-       alert("props info==="+JSON.stringify(props));  
+         addGroup=this;
+      //  alert("props info==="+JSON.stringify(props));  
     }
 
     
       componentDidMount() {  
-            
-            // alert("props data===="+JSON.stringify(this.props));
-            // alert("user info===="+);
-            // this.setState({userId:this.props.params.userId,
-            //                groupId:this.props.params.groupId});
             var groupInfo={};
             groupInfo.userId=this.state.userId;
             groupInfo.groupId=this.state.groupId;
-            var localUrl="http://192.168.43.152";
-            // var liveUrl="https://reactnativechat.herokuapp.com"
+            // http://192.168.0.142   home network
+           // var localUrl="http://192.168.43.152"  office network tripleplay
 
-            socket = io(localUrl, {
+           var localUrl="192.168.1.44:3001" //TechCraftz network
+            var liveUrl="https://reactnativechat.herokuapp.com";
+            socket = io(liveUrl, {
               transports: ['websocket']
             })
             socket.on('connect', () => {
-              // alert("Socket Successfully connected");
-              console.log("socket connected")
-             
+              console.log("socket connected")             
             })
             
             socket.emit('userJoined',groupInfo);
-
-            // this.socket.emit('message', {userCarNo: this.navParams.data});
-
 
             socket.on('connect_error', (err) => {
               console.log("connection error==="+err);
@@ -55,133 +53,93 @@ export default class GroupDetail extends Component{
               console.log("Disconnected Socket!")
             })
 
-            
-
-            socket.on('chat_message', (messages) => {
-
-              // alert("Message Received====="+ JSON.stringify(messages));
+            socket.on('group_chat_message', (messages) => {
               console.log("Message Received====");
-              // alert("Socket emit call=====");
               this.onReceivedMessage(messages)
             })     
-
-            // this.setState({
-            //   messages: [
-            //     {
-            //       _id: 1,
-            //       text: 'Hello developer',
-            //       createdAt: new Date(),
-            //       user: {
-            //         _id: 2,
-            //         name: 'React Native',
-            //         avatar: 'https://facebook.github.io/react/img/logo_og.png',
-            //       },
-            //     },
-            //   ],
-            // })
-
-
-            // [{
-
-            // "text":"hello I am here",
-            // "user":{"userInfo":{"_id":123}},
-            // "createdAt":"2018-03-22T05:14:46.642Z"}]  
-
-            
-            // console.log("Messages===="+JSON.stringify(this.state.messages));
-
-            console.log("Data====="+JSON.stringify(this.state));
-      }
-
-      
-
-      // componentWillUnmount()
-      // {
-      //   console.log("Call Will unmount====");
-      //   socket.emit('disconnect',this.state.userId);
-      // }
-
-      // componentDidCatch()
-      // {
-      //   alert("Error while load this page");
-      // }
-
+      } 
       onReceivedMessage(messages){
 
         this.storeMessages(messages);
       }
       onSend(messages = []) {
-
-            this.setState({isLoading:true})
-
-
-
-            console.log("Loading icon===="+this.state.isLoading);
-
-            //  var obj={};
-            // for(var i=0;i<10;i++)
-            // {
-            //   if(i<=5)
-            //   {
-            //     obj._id=i;
-            //     obj.text="Hellooo "+i;
-            //     obj.user={"userInfo":{"_id":123}};
-            //     obj.createdAt=new Date();
-            //     this.state.messages.push(obj);
-            //   }
-            //   else
-            //   {
-            //     obj._id=i,
-            //     obj.text="Hi receiver "+i,
-            //     obj.createdAt=new Date(),
-            //     obj.user={"_id": 124};
-            //     this.state.messages.push(obj);
-            //   }
-            //   obj={};
-              
-            // }
-
-            // this.onReceivedMessage(this.state.messages);  
-        // alert("Messages===="+JSON.stringify(messages));
-
-        // console.log("New messages==="+JSON.stringify(messages));
+        // var userInfo=SessionService.getUser();
+        this.setState({isLoading:true})
+        console.log("Loading icon===="+this.state.isLoading);
         var messageInfo={};
         messageInfo.message=messages[0].text;
-        messageInfo.receiverId=this.props.object.receiverId;
-        messageInfo.createDate=new Date();
-        messageInfo.senderId=this.props.object.userId;
-        socket.emit('chat_message',messageInfo);
-        // // this.socket.emit('chat_message', {to: this.sendTo, text: this.message});
+        messageInfo.messageDate=new Date();
+        messageInfo.senderId=this.state.userId;
+        // messageInfo.members=this.props.navigation.state.params.member;
+        // messageInfo.groupId=this.props.navigation.state.params.groupId;
+        // messageInfo.senderName=this.props.navigation.state.params.senderName;
+        messageInfo.members=SessionService.getGroupInfo().member;
+        messageInfo.groupId=SessionService.getGroupInfo().groupId;
+        messageInfo.senderName=SessionService.getGroupInfo().senderName;
+        socket.emit('group_chat_message',messageInfo);
         this.storeMessages(messages);
       }
       storeMessages(messages){
         this.setState((previousState) => {
           return {
-            messages: GiftedChat.append(previousState.messages, messages),
+            // messages: GiftedChat.append(previousState.messages, messages),
+            messages:GiftedChat.append(previousState.messages, messages),
             };
         });
         this.setState({isLoading:false})
-
         console.log("Loading icon for receiver===="+this.state.isLoading);
       }
 
+      setModalVisible(visible) {
+        this.setState({modalVisible: visible});
+        if(!visible)
+        {
+          this.setState({isLoading:true});
+          // this.getGroupsList();
+        }
+      }
 
+
+
+      static navigationOptions = {
+        headerRight: (
+        <Button onPress={() => addGroup.openModal()}
+          title="Add Member"
+          color="#841584"
+          accessibilityLabel="Learn more about this purple button"/>   
+        )}
+
+      openModal()
+      {
+        // alert("Open modal---");
+        var groupInfo={};
+        // groupInfo.groupId=this.props.navigation.state.params.groupId;
+        // groupInfo.members=this.props.navigation.state.params.member;
+        // groupInfo.name=this.props.navigation.state.params.name;
+
+        groupInfo.groupId=SessionService.getGroupInfo().groupId;
+        groupInfo.members=SessionService.getGroupInfo().member;
+        groupInfo.name=SessionService.getGroupInfo().name;
+        this.props.navigation.navigate('AddMemberPage',groupInfo);
+      }
+      // static navigationOptions = {
+      //   headerRight: (
+      //   <Button onPress={() => {
+      //     this.openModal()
+      //   }}
+      //     title="Add Member"
+      //     color="#841584"/>   
+      //   )}
       render() {
-        return (
-          // <View>
-          //   {this.state.isLoading ? <ActivityIndicator size="large" color="#0000ff" /> : null}
-          // </View>
-          
+        return (  
           <GiftedChat
-            messages={this.state.messages}
-            onSend={messages => this.onSend(messages)}
-            renderLoading={() =>  <ActivityIndicator size="large" color="#0000ff" />}
-            user={{
-              userInfo
-            }}
+              messages={this.state.messages}
+              onSend={messages => this.onSend(messages)}
+              renderLoading={() =>  <ActivityIndicator size="large" color="#0000ff" />}
+              user={{
+                userInfo
+              }}
           />
-        );
+        );  
       }
 }
-  
-// export default Detail

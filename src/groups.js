@@ -2,9 +2,14 @@ import React, {Component} from 'react';
 import {Modal, Text, TouchableHighlight, View,ScrollView,ActivityIndicator,StyleSheet,TouchableOpacity,TextInput,Button} from 'react-native';
 import { Container, Content, Item, List, Body, ListItem ,CheckBox,Icon} from 'native-base';
 import { environment } from './config/environment';
-// import { CheckBox } from 'react-native-elements'
+import {GroupDetail} from './groupDetail.js';
+import {SessionService} from './config/session-service';
+
 var groupUsers=[];
+
+var addGroup;
 export default class Groups extends Component {
+  
   state = {
     modalVisible: false,
     isLoading:false,
@@ -13,7 +18,7 @@ export default class Groups extends Component {
     groups:[],
     modalVisible: false,
     groupName:'',
-    userId:1780
+    userId:SessionService.getUser().id
   };
   
 
@@ -21,19 +26,18 @@ export default class Groups extends Component {
   constructor(props)
   {
     super(props);
-    // this.setState({isLoading:true});
-    // this.getUsersList();
-
     this.getGroupsList();
+    addGroup=this;
     console.log("Construcotr calll===");
   }
 
   componentDidMount(){ 
     
         // alert("Hello this is me")
-        var obj1={};       
-        obj1.userId=1780;
-        this.setState({isLoading:true});
+        // var obj1={};       
+        // obj1.userId=1780;
+        var userInfo=SessionService.getUser();
+        this.setState({isLoading:true,userId:userInfo.id});
         // this.setState({isLoading:true});  
         console.log("Did mount called");  
   }
@@ -41,7 +45,7 @@ export default class Groups extends Component {
   getGroupsList()
   {
       var info={};
-      info.userId=1780;
+      info.userId=this.state.userId;
       var object = {
         method: 'POST',
         headers: {
@@ -50,32 +54,26 @@ export default class Groups extends Component {
         },
         body: JSON.stringify(info)
       };
-      fetch(environment.API_URL.localUrl+'group/groups',object)
+      fetch(environment.API_URL.liveUrl+'group/groups',object)
         .then((response) => response.json())
         .then((responseJson) => {
           if(responseJson.length==0)
           {
             alert("Sorry No Groups for you!!!!");
-            return;
-          }
-          if(responseJson.length>0)
-          {
             this.setState({
-              isLoading: false,
-              groups: responseJson,
-
-              }, function(){
-            });
+              isLoading: false
+             });
           }
           else
           {
             this.setState({
               isLoading: false,
+              groups: responseJson,
+  
+              }, function(){
             });
-            // alert("No groups right now!");
           }
-        
-          this.getUsersList();
+
         })
         .catch((error) => {
           this.setState({
@@ -91,18 +89,30 @@ export default class Groups extends Component {
   
   getUsersList()
   {
+     this.setState({
+      isLoading: true
+     });
+      var info={};
+      info.userId=this.state.userId;
       var object = {
-          method: 'GET'
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(info)
       };
-      fetch(environment.API_URL.localUrl+'user/allUsers',object)
+
+
+      fetch(environment.API_URL.liveUrl+'user/users',object)
         .then((response) => response.json())
         .then((responseJson) => {
-          this.setState({
-              isLoading: false,
-              dataSource: responseJson,
+          // this.setState({
+          //     isLoading: false,
+          //     dataSource: responseJson,
 
-              }, function(){
-          });
+          //     }, function(){
+          // });
           var my_check=[];
           for(var i=0;i<this.state.dataSource.length;i++)
           {
@@ -111,6 +121,7 @@ export default class Groups extends Component {
           }
 
           this.setState({
+            isLoading: false,
             dataSource:responseJson
           }) 
 
@@ -128,14 +139,7 @@ export default class Groups extends Component {
       });  
   }
 
-  setModalVisible(visible) {
-    this.setState({modalVisible: visible});
-    if(!visible)
-    {
-      this.setState({isLoading:true});
-      this.getGroupsList();
-    }
-  }
+
 
 
   
@@ -184,7 +188,7 @@ export default class Groups extends Component {
     data.member=groupString;
     data.createDate=new Date();
     data.userId=this.state.userId;
-    data.createdBy=this.state.userId;
+    // data.createdBy=this.state.userId;
     this.saveGroupInfo(data)
   }
 
@@ -200,7 +204,7 @@ export default class Groups extends Component {
       },
       body: JSON.stringify(info)
     };
-    fetch(environment.API_URL.localUrl+'group/insertGroup',object)
+    fetch(environment.API_URL.liveUrl+'group/insertGroup',object)
       .then((response) => response.json())
       .then((responseJson) => {
         if(responseJson.length>0)
@@ -233,22 +237,46 @@ export default class Groups extends Component {
         console.error("error in users list fetch==="+error);
     });
   }
-
   groupChat(item)
   {
-    // alert("Group Chat===="+item);
-    var groupInfo={};
-    groupInfo.groupId=item.id;
-    groupInfo.userId=this.state.userId;
+    var groupInfoExist=false;
+    if(SessionService.getGroupInfo())
+    {
+      if(SessionService.getGroupInfo().groupId==item.id)
+      {
+        groupInfoExist=true;
+      }
+    }
+    if(!groupInfoExist)
+    {
+      var groupInfo={};
+      groupInfo.groupId=item.id;
+      groupInfo.userId=this.state.userId;
+      groupInfo.member=item.member;
+      groupInfo.senderName="Himanshu";
+      groupInfo.name=item.name;
+      SessionService.setGroupInfo(groupInfo);
+    }  
+    
     this.props.navigation.navigate('GroupDetail', groupInfo);
   }
+ 
   static navigationOptions = {
     headerRight: (
-  
-      <TouchableOpacity onPress={() => this.setModalVisible(true)}>
-        <Icon name="ei-plus" />
-      </TouchableOpacity>    
-    )
+    <Button onPress={() => addGroup.setModalVisible(true)}
+      title="Add Group"
+      color="#841584"
+      accessibilityLabel="Learn more about this purple button"/>   
+    )}
+   
+  setModalVisible(visible) {
+    this.getUsersList();
+    this.setState({modalVisible: visible});
+    if(!visible)
+    {
+      this.setState({isLoading:true});
+      this.getGroupsList();
+    }
   }
   render() 
   {
@@ -296,44 +324,34 @@ export default class Groups extends Component {
                       <ListItem key = {item.id} onPress={() => this.checkItem(item)}>
                         <CheckBox checked={this.state.dataSource[index].pressed}/>
                         <Body>
-                          <Text>{item.mobile}</Text>
+                          <Text>{item.name!=null ? item.name :item.mobile}</Text>
+                          
                         </Body>
                       </ListItem>
                     ))}
                     </Content>
             </Container>
           </Modal>
-                  
-        
-
-           
-
-                <TouchableHighlight
-                        onPress={() => {
-                          this.setModalVisible(true);
-                        }}>
-                        <Text>Add Group111</Text>
-                </TouchableHighlight>         
-
-              <ScrollView>
                 
-                <View style={{ flex: 1, paddingTop: 0 }}>
-                    
-                    {
-                        this.state.groups.map((item, index) => (
-                            <TouchableOpacity
-                                key={item.id}
-                                style={styles.container}
-                                onPress={() => this.groupChat(item)}>
+          <ScrollView>
+              
+              <View style={{ flex: 1, paddingTop: 0 }}>
+                  
+                  {
+                      this.state.groups.map((item, index) => (
+                          <TouchableOpacity
+                              key={item.id}
+                              style={styles.container}
+                              onPress={() => this.groupChat(item)}>
 
-                                <Text style={styles.text}>
-                                    {item.name}
-                                </Text>
-                            </TouchableOpacity>
-                        ))
-                    }
-                </View>
-            </ScrollView>
+                              <Text style={styles.text}>
+                                  {item.name}
+                              </Text>
+                          </TouchableOpacity>
+                      ))
+                  }
+              </View>
+          </ScrollView>
       </View>
 
 

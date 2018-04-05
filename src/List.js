@@ -3,6 +3,8 @@ import { Text, View, TouchableOpacity, StyleSheet, ActivityIndicator, ScrollView
 import { Icon } from 'native-base';
 import { Actions } from 'react-native-router-flux'
 import { environment } from './config/environment';
+import {SessionService} from './config/session-service';
+
 var obj1 = {};
 
 class List extends Component {
@@ -22,8 +24,8 @@ class List extends Component {
 
 
 
-        obj1 = { 'userId': this.props.navigation.state.params.id };
-
+        // obj1 = { 'userId': this.props.navigation.state.params.id };
+        obj1 = { 'userId': SessionService.getUser().id };
         this.getUsersList(obj1);
     }
 
@@ -71,7 +73,8 @@ class List extends Component {
     goDetail1 = (item) => {
         obj1.receiverId = item.id;
         console.log("Item nme==" + item.name);
-        Actions.Detail({ object: obj1 })
+        this.props.navigation.navigate('Detail', obj1);
+        // Actions.Detail({ object: obj1 })
     }
 
     // SideMenuOpenClose(){
@@ -102,7 +105,7 @@ class List extends Component {
                                 onPress={() => this.goDetail1(item)}>
 
                                 <Text style={styles.text}>
-                                    {item.mobile}
+                                    {item.name!=null ? item.name :item.mobile}
                                 </Text>
                             </TouchableOpacity>
                         ))
