@@ -5,7 +5,6 @@ import { Actions } from 'react-native-router-flux'
 import { Container, Content, Item, List, Body, ListItem ,CheckBox,Icon} from 'native-base';
 import { GiftedChat } from 'react-native-gifted-chat'
 import {SessionService} from './config/session-service';
-const io = require('socket.io-client');
 let socket;
 let userInfo;
 var addGroup;
@@ -23,6 +22,8 @@ export default class GroupDetail extends Component{
         }
          userInfo={ _id:this.state.userId};
          addGroup=this;
+
+         socket=SessionService.getUserSockets();
       //  alert("props info==="+JSON.stringify(props));  
     }
 
@@ -34,29 +35,33 @@ export default class GroupDetail extends Component{
             // http://192.168.0.142   home network
            // var localUrl="http://192.168.43.152"  office network tripleplay
 
-           var localUrl="192.168.1.44:3001" //TechCraftz network
-            var liveUrl="https://reactnativechat.herokuapp.com";
-            socket = io(liveUrl, {
-              transports: ['websocket']
-            })
-            socket.on('connect', () => {
-              console.log("socket connected")             
-            })
+            // var localUrl="192.168.1.44:3001" //TechCraftz network
+            // var liveUrl="https://reactnativechat.herokuapp.com";
+            // socket = io(liveUrl, {
+            //   transports: ['websocket']
+            // })
+            // socket.on('connect', () => {
+            //   console.log("socket connected")             
+            // })
             
-            socket.emit('userJoined',groupInfo);
+            // socket.emit('userJoined',groupInfo);
 
-            socket.on('connect_error', (err) => {
-              console.log("connection error==="+err);
-            })
+            // socket.on('connect_error', (err) => {
+            //   console.log("connection error==="+err);
+            // })
 
-            socket.on('disconnect', () => {
-              console.log("Disconnected Socket!")
-            })
+            // socket.on('disconnect', () => {
+            //   console.log("Disconnected Socket!")
+            // })
 
             socket.on('group_chat_message', (messages) => {
               console.log("Message Received====");
               this.onReceivedMessage(messages)
-            })     
+            })   
+
+            socket.emit('get_group_messages',groupInfo);
+            
+            
       } 
       onReceivedMessage(messages){
 

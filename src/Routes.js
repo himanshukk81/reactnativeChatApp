@@ -10,12 +10,23 @@ import Groups from './groups.js'
 import GroupDetail from './groupDetail.js'
 import { Icon } from 'react-native-elements'
 import AddMemberPage from './addMember.js' 
+import {SessionService} from './config/session-service';
+const io = require('socket.io-client');
+
+
 // import NavigationDrawer from './NavigationDrawer.js' 
 // const io = require('socket.io-client');
 // import Drawer from 'react-native-drawer';
 
 //<Icon name="menu" size={30} color="black"/>
                     /* <Icon name='home' /> */
+ 
+   
+if(SessionService.getUser())
+{
+  SessionService.setUserSockets();
+}
+
 
 const DrawerRoutes = {
 	Users: {

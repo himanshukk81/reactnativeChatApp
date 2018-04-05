@@ -33,32 +33,32 @@ export default class Detail extends Component{
             // http://192.168.43.152        // home netwrok
             // https://reactnativechat.herokuapp.com
             // alert("Detail page:::---");
-            socket = io('https://reactnativechat.herokuapp.com', {
-              transports: ['websocket']
-            })
-            socket.on('connect', () => {
-              // alert("Socket Successfully connected");
-              console.log("socket connected")
+            // socket = io('https://reactnativechat.herokuapp.com', {
+            //   transports: ['websocket']
+            // })
+            // socket.on('connect', () => {
+            //   // alert("Socket Successfully connected");
+            //   console.log("socket connected")
              
-            })
+            // })
 
-            // var data={userCarNo:this.state.userId}
-
-
-            socket.emit('userJoined',this.props.object);
-
-            // this.socket.emit('message', {userCarNo: this.navParams.data});
+            // // var data={userCarNo:this.state.userId}
 
 
-            socket.on('connect_error', (err) => {
-              console.log("connection error==="+err);
-            })
+            // socket.emit('userJoined',this.props.object);
 
-            socket.on('disconnect', () => {
-              console.log("Disconnected Socket!")
-            })
+            // // this.socket.emit('message', {userCarNo: this.navParams.data});
 
-            
+
+            // socket.on('connect_error', (err) => {
+            //   console.log("connection error==="+err);
+            // })
+
+            // socket.on('disconnect', () => {
+            //   console.log("Disconnected Socket!")
+            // })
+
+            socket.emit('get_user_messages',groupInfo);
 
             socket.on('chat_message', (messages) => {
 
