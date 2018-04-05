@@ -26,7 +26,8 @@ export  const SessionService={
     setUserSockets()
     {
         var data={};
-        data.userId=this.getUser().id;
+        // data.userId=this.getUser().id;
+        data.userId=1837576;
         var localUrl="192.168.1.44:3001" //TechCraftz network
         var liveUrl="https://reactnativechat.herokuapp.com";
         socket = io(liveUrl, {

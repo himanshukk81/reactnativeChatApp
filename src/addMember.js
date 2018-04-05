@@ -218,7 +218,7 @@ export default class AddMemberPage extends Component {
       },
       body: JSON.stringify(info)
     };
-    fetch(environment.API_URL.localUrl+'group/updateGroup',object)
+    fetch(environment.API_URL.liveUrl+'group/updateGroup',object)
       .then((response) => response.json())
       .then((responseJson) => {
         this.setState({

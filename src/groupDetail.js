@@ -13,22 +13,30 @@ export default class GroupDetail extends Component{
     {
       // SessionService.getUser().id
       // this.props.navigation.state.params.groupId
+
+        // SessionService.getUser().id 
+        // SessionService.getGroupInfo().groupId
+
+        
         super(props);
         this.state = {
           messages: [],
-          userId:SessionService.getUser().id,
+          userId:1837576,
           isLoading:true,
-          groupId:SessionService.getGroupInfo().groupId
+          groupId:48
         }
          userInfo={ _id:this.state.userId};
          addGroup=this;
 
-         socket=SessionService.getUserSockets();
+
+          
+         
       //  alert("props info==="+JSON.stringify(props));  
     }
 
     
       componentDidMount() {  
+            socket=SessionService.getUserSockets();
             var groupInfo={};
             groupInfo.userId=this.state.userId;
             groupInfo.groupId=this.state.groupId;
@@ -55,9 +63,28 @@ export default class GroupDetail extends Component{
             // })
 
             socket.on('group_chat_message', (messages) => {
-              console.log("Message Received====");
+              // console.log("Message Received====");
+              // // alert("Messages info==="+JSON.stringify(messages));
+              // console.log("Message info===="+JSON.stringify(messages));
+              // if(messages[0].user._id==SessionService.getGroupInfo().groupId)
+              // {
+              //   this.onReceivedMessage(messages)
+              // }
+              console.log("Messages info==="+JSON.stringify(messages));
               this.onReceivedMessage(messages)
-            })   
+            }) 
+            
+            socket.on('group_chat_message_send', (messages) => {
+
+              // console.log("Messages info==="+JSON.stringify(messages));
+              console.log("Group info messags==="+JSON.stringify(SessionService.getGroupInfo()));
+              if(messages[0].user._id==SessionService.getGroupInfo().groupId)
+              {
+                this.onReceivedMessage(messages)
+              }
+            })  
+
+            
 
             socket.emit('get_group_messages',groupInfo);
             
@@ -78,9 +105,15 @@ export default class GroupDetail extends Component{
         // messageInfo.members=this.props.navigation.state.params.member;
         // messageInfo.groupId=this.props.navigation.state.params.groupId;
         // messageInfo.senderName=this.props.navigation.state.params.senderName;
-        messageInfo.members=SessionService.getGroupInfo().member;
-        messageInfo.groupId=SessionService.getGroupInfo().groupId;
-        messageInfo.senderName=SessionService.getGroupInfo().senderName;
+        // messageInfo.members=SessionService.getGroupInfo().member;
+        // messageInfo.groupId=SessionService.getGroupInfo().groupId;
+        // messageInfo.senderName=SessionService.getGroupInfo().senderName;
+
+
+         messageInfo.members="1837575";
+         messageInfo.groupId=this.state.groupId;
+         messageInfo.senderName="Himanshu";
+        
         socket.emit('group_chat_message',messageInfo);
         this.storeMessages(messages);
       }
@@ -136,11 +169,15 @@ export default class GroupDetail extends Component{
       //     color="#841584"/>   
       //   )}
       render() {
+        renderMessageText2 =()=>{
+          return "himanshu"
+        }
         return (  
           <GiftedChat
               messages={this.state.messages}
               onSend={messages => this.onSend(messages)}
               renderLoading={() =>  <ActivityIndicator size="large" color="#0000ff" />}
+              
               user={{
                 userInfo
               }}

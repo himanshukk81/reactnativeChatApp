@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Text, View, TouchableOpacity, StyleSheet, StatusBar, ActivityIndicator, Image, TextInput, Button, KeyboardAvoidingView, ScrollView, AsyncStorage } from 'react-native'
 import { Actions } from 'react-native-router-flux';
 import { fbLoginPermissions } from './constants/index';
-import { FBLoginManager } from 'react-native-facebook-login';
+// import { FBLoginManager } from 'react-native-facebook-login';
 import { environment } from './config/environment';
 import { Container, Header, Content, Icon } from 'native-base';
 import {SessionService} from './config/session-service';
@@ -74,17 +74,17 @@ export default class Login extends Component {
 
 
 
-    fbLogin = () => {
-        FBLoginManager.loginWithPermissions(fbLoginPermissions || ['email'], (error, data) => {
-            if (!error) {
-                this.fbData(data.credentials.token)
-            } else {
-                alert("Failed to get info from facebook please try again");
-                console.log("Firebase error===" + error);
-                // reject(error);
-            }
-        });
-    }
+    // fbLogin = () => {
+    //     FBLoginManager.loginWithPermissions(fbLoginPermissions || ['email'], (error, data) => {
+    //         if (!error) {
+    //             this.fbData(data.credentials.token)
+    //         } else {
+    //             alert("Failed to get info from facebook please try again");
+    //             console.log("Firebase error===" + error);
+    //             // reject(error);
+    //         }
+    //     });
+    // }
 
     fbData(token) {
         fetch('https://graph.facebook.com/v2.8/me?fields=id,first_name,last_name,gender,birthday,picture&access_token=' + token)

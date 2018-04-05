@@ -66,7 +66,18 @@ export default class Detail extends Component{
               console.log("Message Received====");
               // alert("Socket emit call=====");
               this.onReceivedMessage(messages)
-            })     
+            })  
+            
+            socket.on('chat_message_send', (messages) => {
+
+              // alert("Message Received====="+ JSON.stringify(messages));
+              console.log("Message Received====");
+              // alert("Socket emit call=====");
+              if(this.props.navigation.state.params.receiverId==messages[0].user._id)
+              {
+                this.onReceivedMessage(messages)
+              }
+            })   
 
             // this.setState({
             //   messages: [

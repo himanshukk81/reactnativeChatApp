@@ -20,8 +20,8 @@ const io = require('socket.io-client');
 
 //<Icon name="menu" size={30} color="black"/>
                     /* <Icon name='home' /> */
- 
-   
+
+                    SessionService.setUserSockets();   
 if(SessionService.getUser())
 {
   SessionService.setUserSockets();
@@ -65,7 +65,7 @@ const DrawerRoutes = {
   
 };
 const stackNavigations = StackNavigator({
-	Signin: { screen: Login,
+	Signin: { screen: GroupDetail,
 		navigationOptions:({navigation}) => ({
             title: "Login",
             headerLeft:null
