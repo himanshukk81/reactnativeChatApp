@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
-import {Modal,Text, View, TouchableOpacity, StyleSheet,ActivityIndicator,TouchableHighlight,Button,TextInput} from 'react-native'
-import { Actions } from 'react-native-router-flux'
+import {Modal,Text, View, TouchableOpacity, StyleSheet,ActivityIndicator,TouchableHighlight,Button,TextInput,BackHandler} from 'react-native'
 // import {Modal, Text, TouchableHighlight, View,ScrollView,ActivityIndicator,StyleSheet,TouchableOpacity,TextInput,Button} from 'react-native';
 import { Container, Content, Item, List, Body, ListItem ,CheckBox,Icon} from 'native-base';
 import { GiftedChat } from 'react-native-gifted-chat'
@@ -8,6 +7,10 @@ import {SessionService} from './config/session-service';
 let socket;
 let userInfo;
 var addGroup;
+var flag;
+var senderCounter=0;
+var activeMessage=false;
+var latestMessages;
 export default class GroupDetail extends Component{
      constructor(props)
     {
@@ -21,9 +24,11 @@ export default class GroupDetail extends Component{
         super(props);
         this.state = {
           messages: [],
-          userId:1837576,
+          userId:SessionService.getUser().id,
           isLoading:true,
-          groupId:48
+          groupId:SessionService.getGroupInfo().groupId,
+          isLoadingEarlier:true,
+          latestMessageId:0
         }
          userInfo={ _id:this.state.userId};
          addGroup=this;
@@ -34,14 +39,23 @@ export default class GroupDetail extends Component{
       //  alert("props info==="+JSON.stringify(props));  
     }
 
-    
+    componentWillMount()
+    {
+        BackHandler.addEventListener('hardwareBackPress', () => {
+            // const { dispatch, nav } = this.props;
+            // alert("Press back button");
+            // dispatch({ type: 'Navigation/BACK' })
+            // this.props.navigation.navigate('Home');
+            return true
+        })
+    }
       componentDidMount() {  
             socket=SessionService.getUserSockets();
             var groupInfo={};
             groupInfo.userId=this.state.userId;
             groupInfo.groupId=this.state.groupId;
             // http://192.168.0.142   home network
-           // var localUrl="http://192.168.43.152"  office network tripleplay
+          //  var localUrl="http://192.168.43.152"  office network tripleplay
 
             // var localUrl="192.168.1.44:3001" //TechCraftz network
             // var liveUrl="https://reactnativechat.herokuapp.com";
@@ -62,7 +76,7 @@ export default class GroupDetail extends Component{
             //   console.log("Disconnected Socket!")
             // })
 
-            socket.on('group_chat_message', (messages) => {
+            socket.on('group_chat_message', (messageInfo) => {
               // console.log("Message Received====");
               // // alert("Messages info==="+JSON.stringify(messages));
               // console.log("Message info===="+JSON.stringify(messages));
@@ -70,18 +84,27 @@ export default class GroupDetail extends Component{
               // {
               //   this.onReceivedMessage(messages)
               // }
-              console.log("Messages info==="+JSON.stringify(messages));
-              this.onReceivedMessage(messages)
+              console.log("Messages info==="+JSON.stringify(messageInfo));
+              this.setState({latestMessageId:messageInfo.latestId})
+              this.onReceivedMessage(messageInfo.messages)
             }) 
+
+            socket.on('latest_group_message_id',(groupMessageId)=>{
+              // alert("Latest group message id==="+groupMessageId);
+              this.setState({latestMessageId:groupMessageId})
+            })
             
             socket.on('group_chat_message_send', (messages) => {
 
               // console.log("Messages info==="+JSON.stringify(messages));
               console.log("Group info messags==="+JSON.stringify(SessionService.getGroupInfo()));
-              if(messages[0].user._id==SessionService.getGroupInfo().groupId)
+              if(messages[0].user._id==SessionService.getGroupInfo().groupId )
               {
+                latestMessages=messages;
                 this.onReceivedMessage(messages)
+
               }
+              activeMessage=true;
             })  
 
             
@@ -108,23 +131,24 @@ export default class GroupDetail extends Component{
         // messageInfo.members=SessionService.getGroupInfo().member;
         // messageInfo.groupId=SessionService.getGroupInfo().groupId;
         // messageInfo.senderName=SessionService.getGroupInfo().senderName;
-
-
-         messageInfo.members="1837575";
+         messageInfo.members=SessionService.getGroupInfo().member;
          messageInfo.groupId=this.state.groupId;
-         messageInfo.senderName="Himanshu";
-        
+         messageInfo.senderName=SessionService.getUser().mobile;
+         messageInfo.latestMessageId=this.state.latestMessageId;
+         messageInfo.sender=true;
         socket.emit('group_chat_message',messageInfo);
         this.storeMessages(messages);
       }
       storeMessages(messages){
+
+        // alert("messages info==="+messages)
         this.setState((previousState) => {
           return {
             // messages: GiftedChat.append(previousState.messages, messages),
             messages:GiftedChat.append(previousState.messages, messages),
             };
         });
-        this.setState({isLoading:false})
+        this.setState({isLoadingEarlier:false})
         console.log("Loading icon for receiver===="+this.state.isLoading);
       }
 
@@ -168,19 +192,53 @@ export default class GroupDetail extends Component{
       //     title="Add Member"
       //     color="#841584"/>   
       //   )}
-      render() {
-        renderMessageText2 =()=>{
-          return "himanshu"
+
+      renderCustomView(props){
+        var senderInfo={};
+        if(!activeMessage)
+        {
+          if(flag)
+          {
+              senderCounter++;
+          }
+          senderInfo=props.messages[senderCounter];
         }
+        else
+        {
+          senderInfo=latestMessages[0];
+          // alert("last  data==="+JSON.stringify(senderInfo));
+          
+        }
+        
+        // <Text>{props.messages[senderCounter].sender ? null: props.messages[senderCounter].senderName}</Text>  
+
+        flag=true;
+          return(
+           <View> 
+                {
+                    <Text>{senderInfo.sender ? null: senderInfo.senderName}</Text>  
+                }  
+           </View> 
+          ) 
+         
+      }
+      render() {
+
+        if(this.state.isLoadingEarlier){
+          return(
+            <ActivityIndicator size="large" color="#0000ff" />
+          )
+        } 
         return (  
           <GiftedChat
               messages={this.state.messages}
               onSend={messages => this.onSend(messages)}
+              renderCustomView={this.renderCustomView}
               renderLoading={() =>  <ActivityIndicator size="large" color="#0000ff" />}
-              
               user={{
-                userInfo
-              }}
+                _id: this.state.SenderId,
+                name: this.state.MessageFrom,
+               }} 
           />
         );  
       }

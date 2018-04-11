@@ -3,6 +3,8 @@ import { AppRegistry } from 'react-native';
 
 import Routes from './src/Routes';
 
+// import Login from './src/login'
+
 console.disableYellowBox = true;
 AppRegistry.registerComponent('reactChatApp', () => Routes);
 

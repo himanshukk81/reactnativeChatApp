@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { Router, Scene, ActionConst } from 'react-native-router-flux'
 import List from './List.js'
 import Detail from './Detail.js'
 import Login from './login.js'
@@ -11,7 +10,8 @@ import GroupDetail from './groupDetail.js'
 import { Icon } from 'react-native-elements'
 import AddMemberPage from './addMember.js' 
 import {SessionService} from './config/session-service';
-const io = require('socket.io-client');
+import {AsyncStorage,Platform } from 'react-native'
+import First from "./first.js"
 
 
 // import NavigationDrawer from './NavigationDrawer.js' 
@@ -21,11 +21,7 @@ const io = require('socket.io-client');
 //<Icon name="menu" size={30} color="black"/>
                     /* <Icon name='home' /> */
 
-                    SessionService.setUserSockets();   
-if(SessionService.getUser())
-{
-  SessionService.setUserSockets();
-}
+
 
 
 const DrawerRoutes = {
@@ -65,25 +61,14 @@ const DrawerRoutes = {
   
 };
 const stackNavigations = StackNavigator({
-	Signin: { screen: GroupDetail,
-		navigationOptions:({navigation}) => ({
+	Signin: { screen: First,
+		    navigationOptions:({navigation}) => ({
             title: "Login",
             headerLeft:null
         })
   },
-  // Groups: {
-	// 	screen: Groups,
-	// 	navigationOptions:({navigation}) => ({
-  //           title: "Groups",
-  //           headerLeft:(
-  //             <TouchableOpacity onPress={() => navigation.navigate("DrawerOpen")}>
-  //               <Icon name="menu" />
-  //             </TouchableOpacity>
-  //           ),
-  //       })
-  // },
 	Home: {
-		screen: DrawerNavigator(DrawerRoutes),
+    screen: DrawerNavigator(DrawerRoutes)
   },
   GroupDetail: {
     screen:GroupDetail,
@@ -91,14 +76,12 @@ const stackNavigations = StackNavigator({
       title: "GroupDetail"
     })
   },
-
   Detail: {
     screen:Detail,
     navigationOptions:({navigation}) => ({
       title: "Detail"
     })
   },
-  
   AddMemberPage:{
     screen:AddMemberPage,
     navigationOptions:({navigation}) => ({

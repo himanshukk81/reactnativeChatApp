@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
-import { Text, View, TouchableOpacity, StyleSheet, ActivityIndicator, ScrollView, AsyncStorage } from 'react-native'
+import { Text, View, TouchableOpacity, StyleSheet, ActivityIndicator, ScrollView, AsyncStorage,BackHandler } from 'react-native'
 import { Icon } from 'native-base';
-import { Actions } from 'react-native-router-flux'
 import { environment } from './config/environment';
 import {SessionService} from './config/session-service';
 
@@ -29,6 +28,16 @@ class List extends Component {
         this.getUsersList(obj1);
     }
 
+    componentWillMount()
+    {
+        BackHandler.addEventListener('hardwareBackPress', () => {
+            // const { dispatch, nav } = this.props;
+            // alert("Press back button");
+            // dispatch({ type: 'Navigation/BACK' })
+            // this.props.navigation.navigate('Home');
+            return true
+        })
+    }
   
 
 
@@ -42,7 +51,7 @@ class List extends Component {
             },
             body: JSON.stringify(infos)
         };
-        fetch(environment.API_URL.liveUrl + 'user/users', object)
+        fetch(environment.API_URL + 'user/users', object)
             .then((response) => response.json())
             .then((responseJson) => {
                 // alert("User list==="+JSON.stringify(responseJson));
@@ -106,7 +115,9 @@ class List extends Component {
 
                                 <Text style={styles.text}>
                                     {item.name!=null ? item.name :item.mobile}
+                                    
                                 </Text>
+                                <Text>{item.id}</Text>
                             </TouchableOpacity>
                         ))
                     }
