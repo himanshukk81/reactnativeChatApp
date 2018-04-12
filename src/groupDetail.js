@@ -206,8 +206,7 @@ export default class GroupDetail extends Component{
         else
         {
           senderInfo=latestMessages[0];
-          // alert("last  data==="+JSON.stringify(senderInfo));
-          
+          alert("Sender Info===="+JSON.stringify(senderInfo)); 
         }
         
         // <Text>{props.messages[senderCounter].sender ? null: props.messages[senderCounter].senderName}</Text>  

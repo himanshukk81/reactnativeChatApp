@@ -2,27 +2,16 @@ import React, { Component } from 'react'
 import List from './List.js'
 import Detail from './Detail.js'
 import Login from './login.js'
-import { TouchableOpacity } from 'react-native';
-// import { Icon } from 'native-base';
-import { StackNavigator, DrawerNavigator } from 'react-navigation';
 import Groups from './groups.js'
 import GroupDetail from './groupDetail.js'
+import AddMemberPage from './addMember.js'
+import First from "./first.js"
+import Profile from './profile.js'
+import { TouchableOpacity } from 'react-native';
+import { StackNavigator, DrawerNavigator } from 'react-navigation';
 import { Icon } from 'react-native-elements'
-import AddMemberPage from './addMember.js' 
 import {SessionService} from './config/session-service';
 import {AsyncStorage,Platform } from 'react-native'
-import First from "./first.js"
-
-
-// import NavigationDrawer from './NavigationDrawer.js' 
-// const io = require('socket.io-client');
-// import Drawer from 'react-native-drawer';
-
-//<Icon name="menu" size={30} color="black"/>
-                    /* <Icon name='home' /> */
-
-
-
 
 const DrawerRoutes = {
 	Users: {
@@ -51,10 +40,21 @@ const DrawerRoutes = {
             ),
         })
   },
+  Profile: {
+		screen: Profile,
+		navigationOptions:({navigation}) => ({
+            title: "Profile",
+            headerLeft:(
+              <TouchableOpacity onPress={() => navigation.navigate("DrawerOpen")}>
+                <Icon name="menu" />
+              </TouchableOpacity>
+            ),
+        })
+  },
 	Logout: {
 		screen: Login,
 		navigationOptions:({navigation}) => ({
-            title: "Login",
+            title: "Logout",
             headerLeft:null
     })
   },
